@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import me.nosrac.antlr4.JSONLexer;
 import me.nosrac.antlr4.JSONParser;
+import me.nosrac.filetypes.csharp.CSharpJSONVisitor;
 
 public final class App {
 
@@ -18,7 +19,7 @@ public final class App {
         JSONParser jsonParser = new JSONParser(commonTokenStream);
 
         ParseTree parseTree = jsonParser.json();
-        MyJSONVisitor visitor = new MyJSONVisitor();
+        CSharpJSONVisitor visitor = new CSharpJSONVisitor();
 
         visitor.visit(parseTree);        
     }
