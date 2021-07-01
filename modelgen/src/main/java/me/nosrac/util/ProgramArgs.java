@@ -3,9 +3,16 @@ package me.nosrac.util;
 public class ProgramArgs {
     
     private String sourceType;
+    public String getSourceType() { return this.sourceType; }
+
     private String source;
+    public String getSource() { return this.source; }
+
     private String destination;
+    public String getDestination() { return this.destination; }
+
     private String language;
+    public String getLanguage() { return this.language; }
 
     private ProgramArgs() { }
 
@@ -27,7 +34,7 @@ public class ProgramArgs {
 
     }
 
-    private static void printUsage() {
+    public static void printUsage() {
 
         System.out.println("Usage: --type <type> --source <source> --dest <dest> --lang <lang>");
         System.out.println("\t<type>: url | path");
