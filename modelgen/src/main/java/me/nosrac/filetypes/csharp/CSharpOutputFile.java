@@ -1,20 +1,12 @@
 package me.nosrac.filetypes.csharp;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import me.nosrac.filetypes.FileMembers;
 import me.nosrac.filetypes.OutputFile;
 import me.nosrac.util.Emitter;
 
 public class CSharpOutputFile implements OutputFile {
-
-    private enum CSharpType {
-        BOOL,
-        FLOAT,
-        INT,
-        STRING
-    }
 
     private ArrayList<CSharpFileMembers> members;
 
