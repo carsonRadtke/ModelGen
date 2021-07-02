@@ -7,6 +7,14 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+
+import me.nosrac.antlr4.JSONLexer;
+import me.nosrac.antlr4.JSONParser;
+import me.nosrac.filetypes.csharp.CSharpJSONVisitor;
+
 public class ModelGenerator {
 
     private static List<String> acceptedLanguages = List.of("C#", "CSHARP");
@@ -41,10 +49,10 @@ public class ModelGenerator {
 
         String responseBody = makeHTTPRequest(url);
 
-        System.out.println(responseBody);
+        generate(responseBody, outputFile, outputLang);
 
     }
-    
+
     private static String makeHTTPRequest(String url) {
 
         String ret;
@@ -52,17 +60,11 @@ public class ModelGenerator {
         HttpClient client = HttpClient.newHttpClient();
 
         try {
-            HttpResponse<String> response = client.send(
-                HttpRequest
-                    .newBuilder(new URI(url))
-                    .GET()
-                    .build(),
-                BodyHandlers.ofString()
-            );
+            HttpResponse<String> response = client.send(HttpRequest.newBuilder(new URI(url)).GET().build(),
+                    BodyHandlers.ofString());
 
             ret = response.body();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ret = null;
         }
 
@@ -93,6 +95,32 @@ public class ModelGenerator {
             return false;
 
         return ModelGenerator.acceptedLanguages.contains(language.toUpperCase());
+
+    }
+
+    private static void generate(String json, String outputFile, String lang) {
+
+        JSONLexer jsonLexer = new JSONLexer(CharStreams.fromString(json));
+        CommonTokenStream commonTokenStream = new CommonTokenStream(jsonLexer);
+        JSONParser jsonParser = new JSONParser(commonTokenStream);
+
+        ParseTree parseTree = jsonParser.json();
+        
+        switch (lang) {
+
+            case "C#":
+            case "CSHARP":
+                generateCSharp(parseTree, outputFile);
+                break;
+
+        }
+    }
+
+    private static void generateCSharp(ParseTree parseTree, String outputFile) {
+
+        CSharpJSONVisitor visitor = new CSharpJSONVisitor();
+
+        visitor.visit(parseTree);
 
     }
 
