@@ -7,7 +7,7 @@ public final class App {
 
     public static void main(String[] args) {
 
-        ProgramArgs programArgs = ProgramArgs.handleArgs(args);
+        ProgramArgs programArgs = ProgramArgs.handleArgs("_ --type url --source https://jsonplaceholder.typicode.com/users --dest null --lang csharp".split(" "));
 
         try {
             ModelGenerator.generate(programArgs);

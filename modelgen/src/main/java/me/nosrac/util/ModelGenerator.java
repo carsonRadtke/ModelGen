@@ -1,5 +1,10 @@
 package me.nosrac.util;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 
 public class ModelGenerator {
@@ -34,6 +39,34 @@ public class ModelGenerator {
             return;
         }
 
+        String responseBody = makeHTTPRequest(url);
+
+        System.out.println(responseBody);
+
+    }
+    
+    private static String makeHTTPRequest(String url) {
+
+        String ret;
+
+        HttpClient client = HttpClient.newHttpClient();
+
+        try {
+            HttpResponse<String> response = client.send(
+                HttpRequest
+                    .newBuilder(new URI(url))
+                    .GET()
+                    .build(),
+                BodyHandlers.ofString()
+            );
+
+            ret = response.body();
+        }
+        catch (Exception ex) {
+            ret = null;
+        }
+
+        return ret;
     }
 
     private static void generateFromFile(String inputFile, String outputFile, String outputLang) {

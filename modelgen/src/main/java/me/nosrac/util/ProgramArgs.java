@@ -25,7 +25,7 @@ public class ProgramArgs {
         ret.destination = getValue(args, "--dest");
         ret.language = getValue(args, "--lang");
         
-        if (ret.checkArgs()) {
+        if (!ret.checkArgs()) {
             printUsage();
             ret = null;
         }
