@@ -13,6 +13,7 @@ public final class App {
             ModelGenerator.generate(programArgs);
         } catch (Exception ex) {
             System.out.println("Something went wrong :(");
+            System.out.println(ex.getMessage());
         }
         
     }

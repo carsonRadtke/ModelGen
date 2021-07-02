@@ -6,8 +6,6 @@ public interface OutputFile {
     
     public boolean equivalentTo(OutputFile other);
 
-    public FileMembers[] getMembers();
-
     public void printHeader(Emitter emitter);
 
     public void printBody(Emitter emitter);

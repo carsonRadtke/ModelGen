@@ -20,14 +20,21 @@ public class CSharpOutputFile implements OutputFile {
         return false;
     }
 
-    @Override
-    public FileMembers[] getMembers() {
-        return (FileMembers[])this.members.toArray();
+    public ArrayList<CSharpFileMembers> getMembers() {
+        return this.members;
+    }
+
+    public void addMember(CSharpFileMembers member) {
+        this.members.add(member);
+    }
+
+    public void addMembers(ArrayList<CSharpFileMembers> membersToAdd){
+        this.members.addAll(membersToAdd);
     }
 
     @Override
     public void printHeader(Emitter emitter) {
-        emitter.emit("public class GeneratedClass {");
+        emitter.emit("public class GeneratedClass\n{");
     }
 
     @Override

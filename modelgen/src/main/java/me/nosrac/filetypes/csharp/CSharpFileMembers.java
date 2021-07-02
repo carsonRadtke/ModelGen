@@ -11,7 +11,7 @@ public class CSharpFileMembers implements FileMembers {
     @Override
     public void printLine(Emitter emitter) {
         
-        emitter.emit("public " + type + name + " {get; set;}");
+        emitter.emit("\tpublic " + type + " " + name + " { get; set; }");
 
     }
     
