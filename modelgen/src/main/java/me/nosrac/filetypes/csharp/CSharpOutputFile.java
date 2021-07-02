@@ -10,6 +10,10 @@ public class CSharpOutputFile implements OutputFile {
 
     private ArrayList<CSharpFileMembers> members;
 
+    public CSharpOutputFile() {
+        this.members = new ArrayList<CSharpFileMembers>();
+    }
+
     @Override
     public boolean equivalentTo(OutputFile other) {
         // TODO Auto-generated method stub
@@ -18,13 +22,12 @@ public class CSharpOutputFile implements OutputFile {
 
     @Override
     public FileMembers[] getMembers() {
-        // TODO Auto-generated method stub
-        return null;
+        return (FileMembers[])this.members.toArray();
     }
 
     @Override
     public void printHeader(Emitter emitter) {
-        // TODO Auto-generated method stub
+        emitter.emit("public class GeneratedClass {");
     }
 
     @Override
@@ -37,7 +40,7 @@ public class CSharpOutputFile implements OutputFile {
 
     @Override
     public void printFooter(Emitter emitter) {
-        // TODO Auto-generated method stub
+        emitter.emit("}");
     }
     
 }

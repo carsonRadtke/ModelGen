@@ -10,7 +10,9 @@ public class CSharpFileMembers implements FileMembers {
 
     @Override
     public void printLine(Emitter emitter) {
-        // TODO Auto-generated method stub
+        
+        emitter.emit("public " + type + name + " {get; set;}");
+
     }
     
 }

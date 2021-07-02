@@ -1,5 +1,7 @@
 package me.nosrac.util;
 
+import java.io.File;
+import java.io.PrintStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -14,6 +16,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import me.nosrac.antlr4.JSONLexer;
 import me.nosrac.antlr4.JSONParser;
 import me.nosrac.filetypes.csharp.CSharpJSONVisitor;
+import me.nosrac.filetypes.csharp.CSharpOutputFile;
 
 public class ModelGenerator {
 
@@ -100,13 +103,15 @@ public class ModelGenerator {
 
     private static void generate(String json, String outputFile, String lang) {
 
+        System.out.println(json);
+
         JSONLexer jsonLexer = new JSONLexer(CharStreams.fromString(json));
         CommonTokenStream commonTokenStream = new CommonTokenStream(jsonLexer);
         JSONParser jsonParser = new JSONParser(commonTokenStream);
 
         ParseTree parseTree = jsonParser.json();
         
-        switch (lang) {
+        switch (lang.toUpperCase()) {
 
             case "C#":
             case "CSHARP":
@@ -119,9 +124,26 @@ public class ModelGenerator {
     private static void generateCSharp(ParseTree parseTree, String outputFile) {
 
         CSharpJSONVisitor visitor = new CSharpJSONVisitor();
+        CSharpOutputFile csharpOutput = visitor.visit(parseTree);
 
-        visitor.visit(parseTree);
+        File file = new File(outputFile);
 
+        PrintStream printStream = null;
+        try {
+            printStream = new PrintStream(file);
+        }
+        catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        Emitter emitter = new Emitter(printStream);
+
+        System.out.println("emitting");
+        csharpOutput.printHeader(emitter);
+        csharpOutput.printBody(emitter);
+        csharpOutput.printFooter(emitter);
+
+        printStream.close();
     }
 
 }

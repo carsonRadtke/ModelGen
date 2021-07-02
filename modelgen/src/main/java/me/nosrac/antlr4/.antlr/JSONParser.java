@@ -1,4 +1,4 @@
-// Generated from /Users/carson/code/ModelGen/modelgen/src/main/antlr4/JSON.g4 by ANTLR 4.8
+// Generated from /Users/carson/code/ModelGen/modelgen/src/main/java/me/nosrac/antlr4/JSON.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
