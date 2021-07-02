@@ -2,7 +2,6 @@ package me.nosrac.filetypes.csharp;
 
 import java.util.ArrayList;
 
-import me.nosrac.filetypes.FileMembers;
 import me.nosrac.filetypes.OutputFile;
 import me.nosrac.util.Emitter;
 

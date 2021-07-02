@@ -103,8 +103,6 @@ public class ModelGenerator {
 
     private static void generate(String json, String outputFile, String lang) {
 
-        System.out.println(json);
-
         JSONLexer jsonLexer = new JSONLexer(CharStreams.fromString(json));
         CommonTokenStream commonTokenStream = new CommonTokenStream(jsonLexer);
         JSONParser jsonParser = new JSONParser(commonTokenStream);
@@ -132,13 +130,10 @@ public class ModelGenerator {
         try {
             printStream = new PrintStream(file);
         }
-        catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
+        catch (Exception ex) { }
 
         Emitter emitter = new Emitter(printStream);
 
-        System.out.println("emitting");
         csharpOutput.printHeader(emitter);
         csharpOutput.printBody(emitter);
         csharpOutput.printFooter(emitter);
