@@ -135,7 +135,9 @@ public class ModelGenerator {
         Emitter emitter = new Emitter(printStream);
 
         csharpOutput.printHeader(emitter);
+        emitter.indent();
         csharpOutput.printBody(emitter);
+        emitter.unindent();
         csharpOutput.printFooter(emitter);
 
         printStream.close();
