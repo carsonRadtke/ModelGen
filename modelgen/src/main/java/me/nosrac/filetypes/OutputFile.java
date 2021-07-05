@@ -1,14 +1,40 @@
 package me.nosrac.filetypes;
 
-import me.nosrac.util.Emitter;
+import java.io.File;
+import java.io.PrintStream;
 
-public interface OutputFile {
-    
-    public boolean equivalentTo(OutputFile other);
+import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
+import org.antlr.v4.runtime.tree.ParseTree;
 
-    public void printHeader(Emitter emitter);
+import me.nosrac.util.Logger;
 
-    public void printBody(Emitter emitter);
+public class OutputFile {
+   
+    private OutputObject data;
+    private String path;
 
-    public void printFooter(Emitter emitter);
+    public <T extends OutputObject> OutputFile(String path, ParseTree parseTree, AbstractParseTreeVisitor<T> visitor) {
+        this.path = path;
+        this.data = visitor.visit(parseTree);
+    }
+
+    public void printData() {
+        this.data.print(System.out);
+    }
+
+    public void saveData() {
+        File outputFile = new File(this.path);
+        PrintStream printStream;
+
+        try {
+            printStream = new PrintStream(outputFile);
+        } catch (Exception ex) {
+            Logger.logException(ex);
+            return;
+        }
+
+        this.data.print(printStream);
+
+        printStream.close();
+    }
 }

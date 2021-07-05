@@ -9,14 +9,17 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 
+import com.ibm.icu.impl.TextTrieMap.Output;
+
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import me.nosrac.antlr4.JSONLexer;
 import me.nosrac.antlr4.JSONParser;
+import me.nosrac.filetypes.OutputFile;
 import me.nosrac.filetypes.csharp.CSharpJSONVisitor;
-import me.nosrac.filetypes.csharp.CSharpOutputFile;
+import me.nosrac.filetypes.csharp.CSharpOutputObject;
 
 public class ModelGenerator {
 
@@ -121,26 +124,11 @@ public class ModelGenerator {
 
     private static void generateCSharp(ParseTree parseTree, String outputFile) {
 
-        CSharpJSONVisitor visitor = new CSharpJSONVisitor();
-        CSharpOutputFile csharpOutput = visitor.visit(parseTree);
+        OutputFile csOutputFile = new OutputFile(outputFile, parseTree, new CSharpJSONVisitor());
+        
+        csOutputFile.printData();
 
-        File file = new File(outputFile);
-
-        PrintStream printStream = null;
-        try {
-            printStream = new PrintStream(file);
-        }
-        catch (Exception ex) { }
-
-        Emitter emitter = new Emitter(printStream);
-
-        csharpOutput.printHeader(emitter);
-        emitter.indent();
-        csharpOutput.printBody(emitter);
-        emitter.unindent();
-        csharpOutput.printFooter(emitter);
-
-        printStream.close();
+//        csOutputFile.saveData();
     }
 
 }
