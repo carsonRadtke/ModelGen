@@ -4,8 +4,8 @@ public class GeneratedClass {
 	public Boolean isAlive { get; set; }
 	public String lastName { get; set; }
 	public String firstName { get; set; }
-	public childrenClass children { get; set; }
-	public phoneNumbersClass phoneNumbers { get; set; }
+	public childrenClass[] children { get; set; }
+	public phoneNumbersClass[] phoneNumbers { get; set; }
 	public addressClass address { get; set; }
 	public GeneratedClass() {}
 }

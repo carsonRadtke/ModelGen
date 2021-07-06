@@ -7,15 +7,16 @@ import me.nosrac.util.Emitter;
 
 public class CSharpOutputObject implements OutputObject {
 
+    private Boolean array;
     private String name;
     private ArrayList<CSharpObject> rootElements;
     private ArrayList<CSharpOutputObject> refElements;
 
     public CSharpOutputObject() {
-        this("Generated");
+        this("Generated", false);
     }
 
-    public CSharpOutputObject(String name) {
+    public CSharpOutputObject(String name, Boolean array) {
         if (name == null) {
             System.err.println("name was null");
         }
@@ -24,6 +25,8 @@ public class CSharpOutputObject implements OutputObject {
 
         this.rootElements = new ArrayList<CSharpObject>();
         this.refElements = new ArrayList<CSharpOutputObject>();
+
+        this.array = array;
     }
 
     @Override
@@ -105,10 +108,10 @@ public class CSharpOutputObject implements OutputObject {
         emitter.indent();
 
         for (CSharpObject cso : rootElements)
-            emitter.emit(String.format("public %s %s { get; set; }", cso.getType(), cso.getName()));
+            emitter.emit(cso.toString());
 
         for (CSharpOutputObject csoo : refElements)
-            emitter.emit(String.format("public %sClass %s { get; set; }", csoo.getName(), csoo.getName()));
+            emitter.emit(csoo.toString());
 
         emitter.emit(String.format("public %s() {}", className));
         
@@ -137,6 +140,32 @@ public class CSharpOutputObject implements OutputObject {
             if (!this.rootElements.get(i).equals(that.rootElements.get(i))) return false;
 
         return true;
+    }
+
+    @Override
+    public Boolean isArray() {
+        return this.array;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("public ");
+        sb.append(this.name);
+        sb.append("Class");
+        if (this.array)
+            sb.append("[]");
+        sb.append(" ");
+        sb.append(this.name);
+        sb.append(" { get; set; }");
+
+        return sb.toString();
+    }
+
+    @Override
+    public void isArray(Boolean array) {
+        this.array = array;
     }
 
 }

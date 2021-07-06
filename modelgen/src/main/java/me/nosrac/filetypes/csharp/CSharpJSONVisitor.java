@@ -31,8 +31,9 @@ public class CSharpJSONVisitor extends JSONBaseVisitor<CSharpOutputObject> {
         CSharpOutputObject valCtx = this.visit(ctx.value());
 
         if (valCtx == null) {
-            ret.add(new CSharpObject(getType(ctx.value()), name));
+            ret.add(new CSharpObject(getType(ctx.value()), name, isArray(ctx.value())));
         } else {
+            valCtx.isArray(isArray(ctx.value()));
             valCtx.setName(name);
             ret.add(valCtx);
         }
@@ -104,6 +105,10 @@ public class CSharpJSONVisitor extends JSONBaseVisitor<CSharpOutputObject> {
 
         return null;
 
+    }
+
+    private Boolean isArray(JSONParser.ValueContext valCtx) {
+        return valCtx.arr() != null;
     }
 
 }
