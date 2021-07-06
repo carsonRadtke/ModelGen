@@ -96,9 +96,9 @@ public class CSharpJSONVisitor extends JSONBaseVisitor<CSharpOutputObject> {
             return "String";
         } else if (valCtx.NUMBER() != null) {
             return valTxt.contains(".") ? "float" : "int";
-        } else if (valTxt == "true" || valTxt == "false") {
+        } else if (valTxt.equals("true") || valTxt.equals("false")) {
             return "Boolean";
-        } else if (valTxt == "null") {
+        } else if (valTxt.equals("null")) {
             return "Object";
         }
 

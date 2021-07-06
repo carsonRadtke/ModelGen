@@ -51,7 +51,7 @@ public class CSharpOutputObject implements OutputObject {
     @Override
     @SuppressWarnings("unchecked")
     public CSharpOutputObject[] getRefElements() {
-        CSharpOutputObject[] ret = new CSharpOutputObject[this.rootElements.size()];
+        CSharpOutputObject[] ret = new CSharpOutputObject[this.refElements.size()];
 
         int idx = 0;
         for (CSharpOutputObject csoo : this.refElements)
