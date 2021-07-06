@@ -1,7 +1,5 @@
 package me.nosrac.filetypes.csharp;
 
-import java.util.List;
-
 import me.nosrac.antlr4.JSONBaseVisitor;
 import me.nosrac.antlr4.JSONParser;
 
@@ -14,97 +12,98 @@ public class CSharpJSONVisitor extends JSONBaseVisitor<CSharpOutputObject> {
 
     @Override
     public CSharpOutputObject visitObj(JSONParser.ObjContext ctx) {
+        CSharpOutputObject ret = new CSharpOutputObject();
 
-        CSharpOutputObject ret = CSharpOutputObject.GeneratedClass;
-
-        List<JSONParser.PairContext> pairs = ctx.pair();
-
-        for (JSONParser.PairContext pair : pairs) {
-
-            CSharpOutputObject pairRet = this.visit(pair);
-            
-            for (CSharpObject cso : pairRet.getRootElements())
-                ret.add(cso);
-
-            for(CSharpOutputObject csoo : pairRet.getRefElements())
-                ret.add(csoo);
-        }
+        for (JSONParser.PairContext pair : ctx.pair())
+            ret = this.aggregateResult(ret, this.visit(pair));
 
         return ret;
     }
 
     @Override
     public CSharpOutputObject visitPair(JSONParser.PairContext ctx) {
-        CSharpOutputObject ret = CSharpOutputObject.GeneratedClass;
+        
+        CSharpOutputObject ret = new CSharpOutputObject();
 
         String name = ctx.STRING().getText();
         name = name.substring(1, name.length()-1);
 
-        JSONParser.ValueContext value = ctx.value();
+        CSharpOutputObject valCtx = this.visit(ctx.value());
 
-        if (value.obj() != null) {
-
-            CSharpOutputObject objRet = this.visit(value.obj());
-            objRet.setName(name);
-
-            ret.add(objRet);
-
-        } else if (value.arr() != null) {
-
-            CSharpOutputObject arrRet = this.visit(value.arr());
-            arrRet.setName(name);
-
-            ret.add(arrRet);
-
+        if (valCtx == null) {
+            ret.add(new CSharpObject(getType(ctx.value()), name));
         } else {
-            
-            String type;
-
-            if (value.STRING() != null) {
-                type = "String";
-            } else if (value.NUMBER() != null) {
-                type = value.NUMBER().getText().contains(".") ? "float" : "int";
-            } else if (value.getText() == "null") {
-                type = "Object";
-            } else {
-                type = "Bool";
-            }
-
-            ret.add(new CSharpObject(name, type));
-
+            valCtx.setName(name);
+            ret.add(valCtx);
         }
 
-        
         return ret;
     }
 
     @Override
     public CSharpOutputObject visitArr(JSONParser.ArrContext ctx) {
-        CSharpOutputObject ret = visitChildren(ctx);
+        
+        CSharpOutputObject ret = new CSharpOutputObject();
 
-        List<JSONParser.ValueContext> values = ctx.value();
+        for (JSONParser.ValueContext value : ctx.value())
+            ret = this.aggregateResult(ret, this.visit(value));
 
-        for (JSONParser.ValueContext value : values) {
+        return ret;
 
-            CSharpOutputObject valueRet = this.visit(value);
-            
-            for (CSharpObject cso : valueRet.getRootElements())
-                ret.add(cso);
+    }
 
-            for(CSharpOutputObject csoo : valueRet.getRefElements())
-                ret.add(csoo);
+    @Override
+    public CSharpOutputObject visitValue(JSONParser.ValueContext ctx) {
 
+        CSharpOutputObject ret;
+
+        JSONParser.ObjContext objCtx = ctx.obj();
+        JSONParser.ArrContext arrCtx = ctx.arr();
+
+        if (objCtx != null) {
+            ret = this.visit(objCtx);
+        } else if (arrCtx != null) {
+            ret = this.visit(arrCtx);
+        } else {
+            ret = null;
         }
 
         return ret;
     }
 
     @Override
-    public CSharpOutputObject visitValue(JSONParser.ValueContext ctx) {
-        
-        CSharpOutputObject ret = CSharpOutputObject.GeneratedClass;
+    public CSharpOutputObject aggregateResult(CSharpOutputObject prevResult, CSharpOutputObject nextResult) {
+
+        CSharpOutputObject ret = nextResult;
+
+        if (prevResult == null)
+            return ret;
+
+        for (CSharpObject cso : prevResult.getRootElements())
+            ret.add(cso);
+
+        for (CSharpOutputObject csoo : prevResult.getRefElements())
+            ret.add(csoo);
 
         return ret;
+    }
+
+    private String getType(JSONParser.ValueContext valCtx) {
+
+        String valTxt = valCtx.getText();
+
+        if (valCtx.STRING() != null) {
+            return "String";
+        } else if (valCtx.NUMBER() != null) {
+            return valTxt.contains(".") ? "float" : "int";
+        } else if (valTxt == "true" || valTxt == "false") {
+            return "Boolean";
+        } else if (valTxt == "null") {
+            return "Object";
+        }
+
+        return null;
+
     }
 
 }

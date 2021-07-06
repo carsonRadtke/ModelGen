@@ -7,18 +7,18 @@ import me.nosrac.filetypes.OutputObject;
 
 public class CSharpOutputObject implements OutputObject {
 
-    public static final CSharpOutputObject GeneratedClass = new CSharpOutputObject();
-
     private String name;
     private ArrayList<CSharpObject> rootElements;
     private ArrayList<CSharpOutputObject> refElements;
 
-    private CSharpOutputObject() {
+    public CSharpOutputObject() {
         this("Generated");
     }
 
     public CSharpOutputObject(String name) {
-        if (name == null) { System.err.println("name was null"); }
+        if (name == null) {
+            System.err.println("name was null");
+        }
 
         this.name = name;
 
@@ -39,40 +39,73 @@ public class CSharpOutputObject implements OutputObject {
     @Override
     @SuppressWarnings("unchecked")
     public CSharpObject[] getRootElements() {
-        return (CSharpObject[]) this.rootElements.toArray();
+        CSharpObject[] ret = new CSharpObject[this.rootElements.size()];
+
+        int idx = 0;
+        for (CSharpObject cso : this.rootElements)
+            ret[idx++] = cso;
+
+        return ret;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public CSharpOutputObject[] getRefElements() {
-        return (CSharpOutputObject[]) this.refElements.toArray();
+        CSharpOutputObject[] ret = new CSharpOutputObject[this.rootElements.size()];
+
+        int idx = 0;
+        for (CSharpOutputObject csoo : this.refElements)
+            ret[idx++] = csoo;
+
+        return ret;
     }
 
     public void add(CSharpObject langObject) {
-        if (langObject == null) { System.err.println("langObject was null"); }
-        if (langObject.getName() == null) { System.err.println("langObject name was null"); }
-        if (langObject.getType() == null) { System.err.println("langObject type was null"); }
-        
+        if (langObject == null) {
+            System.err.println("langObject was null");
+            return;
+        }
+        if (langObject.getName() == null) {
+            System.err.println("langObject name was null");
+            return;
+        }
+        if (langObject.getType() == null) {
+            System.err.println("langObject type was null");
+            return;
+        }
+
+        if (this.rootElements.contains(langObject))
+            return;
+
         this.rootElements.add(langObject);
     }
 
     public void add(CSharpOutputObject outputObject) {
-        if (outputObject == null) { System.err.println("outputObject was null"); }
-        if (outputObject.getName() == null) { System.err.println("outputObject name was null"); }
+        if (outputObject == null) {
+            System.err.println("outputObject was null");
+            return;
+        }
+        if (outputObject.getName() == null) {
+            System.err.println("outputObject name was null");
+            return;
+        }
+
+        if (this.refElements.contains(outputObject))
+            return;
 
         this.refElements.add(outputObject);
     }
 
     @Override
     public void print(PrintStream printStream) {
-        
+
         printStream.println("public class " + this.name + "Class {");
 
         for (CSharpObject cso : rootElements) {
 
             StringBuilder sb = new StringBuilder();
 
-            sb.append("public ");
+            sb.append("\tpublic ");
             sb.append(cso.getType());
             sb.append(" ");
             sb.append(cso.getName());
@@ -82,23 +115,23 @@ public class CSharpOutputObject implements OutputObject {
 
         }
 
-        for (CSharpOutputObject csoo: refElements) {
+        for (CSharpOutputObject csoo : refElements) {
 
             StringBuilder sb = new StringBuilder();
 
             sb.append("\tpublic ");
             sb.append(csoo.getName());
-            sb.append("Class");
+            sb.append("Class ");
             sb.append(csoo.getName());
             sb.append(" { get; set; }");
 
             printStream.println(sb.toString());
         }
-        
-        printStream.println("\tpublic " + this.name + "() {}");
+
+        printStream.println("\tpublic " + this.name + "Class() {}");
         printStream.println("}");
 
-        for (CSharpOutputObject csoo: refElements) {
+        for (CSharpOutputObject csoo : refElements) {
 
             csoo.print(printStream);
 
@@ -106,6 +139,23 @@ public class CSharpOutputObject implements OutputObject {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (!(o instanceof CSharpOutputObject)) return false;
 
-    
+        CSharpOutputObject that = (CSharpOutputObject) o;
+
+        if (this.refElements.size() != that.refElements.size()) return false;
+        if (this.rootElements.size() != that.refElements.size()) return false;
+
+        for (int i = 0; i < this.refElements.size(); i++)
+            if (!this.refElements.get(i).equals(that.refElements.get(i))) return false;
+
+        for (int i = 0; i < this.rootElements.size(); i++)
+            if (!this.rootElements.get(i).equals(that.rootElements.get(i))) return false;
+
+        return true;
+    }
+
 }

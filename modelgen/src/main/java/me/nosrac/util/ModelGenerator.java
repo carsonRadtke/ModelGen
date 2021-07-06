@@ -1,15 +1,13 @@
 package me.nosrac.util;
 
-import java.io.File;
-import java.io.PrintStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
-
-import com.ibm.icu.impl.TextTrieMap.Output;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -19,7 +17,6 @@ import me.nosrac.antlr4.JSONLexer;
 import me.nosrac.antlr4.JSONParser;
 import me.nosrac.filetypes.OutputFile;
 import me.nosrac.filetypes.csharp.CSharpJSONVisitor;
-import me.nosrac.filetypes.csharp.CSharpOutputObject;
 
 public class ModelGenerator {
 
@@ -84,6 +81,24 @@ public class ModelGenerator {
             return;
         }
 
+        String fileContents = readFileContents(inputFile);
+
+        generate(fileContents, outputFile, outputLang);
+
+    }
+
+    private static String readFileContents(String file) {
+
+        String ret;
+
+        try {
+            ret = Files.readString(Path.of(file));
+        } catch (Exception ex) {
+            ret = null;
+        }
+
+        return ret;
+
     }
 
     private static boolean isValidSourceType(String sourceType) {
@@ -111,7 +126,7 @@ public class ModelGenerator {
         JSONParser jsonParser = new JSONParser(commonTokenStream);
 
         ParseTree parseTree = jsonParser.json();
-        
+
         switch (lang.toUpperCase()) {
 
             case "C#":
@@ -125,10 +140,10 @@ public class ModelGenerator {
     private static void generateCSharp(ParseTree parseTree, String outputFile) {
 
         OutputFile csOutputFile = new OutputFile(outputFile, parseTree, new CSharpJSONVisitor());
-        
+
         csOutputFile.printData();
 
-//        csOutputFile.saveData();
+        // csOutputFile.saveData();
     }
 
 }

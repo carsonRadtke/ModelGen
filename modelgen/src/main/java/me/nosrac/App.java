@@ -9,8 +9,8 @@ public final class App {
 
     public static void main(String[] args) {
 
-        String testType = "URL";
-        String testSource = "https://jsonplaceholder.typicode.com/todos/1";
+        String testType = "FILE";
+        String testSource = "/Users/carson/code/ModelGen/test_input.json";
         String testDest = "/Users/carson/code/ModelGen/test_output.cs";
         String testLang = "CSHARP";
 
@@ -22,6 +22,7 @@ public final class App {
             ModelGenerator.generate(programArgs);
         } catch (Exception ex) {
             System.out.println("Something went wrong :(");
+            ex.printStackTrace();
         }
         
     }
