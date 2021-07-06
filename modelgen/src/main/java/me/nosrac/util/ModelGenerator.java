@@ -141,9 +141,7 @@ public class ModelGenerator {
 
         OutputFile csOutputFile = new OutputFile(outputFile, parseTree, new CSharpJSONVisitor());
 
-        csOutputFile.printData();
-
-        // csOutputFile.saveData();
+        csOutputFile.saveData();
     }
 
 }
