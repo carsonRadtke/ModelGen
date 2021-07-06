@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import me.nosrac.util.Emitter;
 import me.nosrac.util.Logger;
 
 public class OutputFile {
@@ -19,7 +20,7 @@ public class OutputFile {
     }
 
     public void printData() {
-        this.data.print(System.out);
+        this.data.print(new Emitter(System.out));
     }
 
     public void saveData() {
@@ -33,7 +34,7 @@ public class OutputFile {
             return;
         }
 
-        this.data.print(printStream);
+        this.data.print(new Emitter(printStream));
 
         printStream.close();
     }

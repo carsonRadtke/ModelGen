@@ -1,9 +1,9 @@
 package me.nosrac.filetypes.csharp;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 
 import me.nosrac.filetypes.OutputObject;
+import me.nosrac.util.Emitter;
 
 public class CSharpOutputObject implements OutputObject {
 
@@ -97,45 +97,26 @@ public class CSharpOutputObject implements OutputObject {
     }
 
     @Override
-    public void print(PrintStream printStream) {
+    public void print(Emitter emitter) {
 
-        printStream.println("public class " + this.name + "Class {");
+        String className = String.format("%sClass", this.name);
 
-        for (CSharpObject cso : rootElements) {
+        emitter.emit(String.format("public class %s {", className));
+        emitter.indent();
 
-            StringBuilder sb = new StringBuilder();
+        for (CSharpObject cso : rootElements)
+            emitter.emit(String.format("public %s %s { get; set; }", cso.getType(), cso.getName()));
 
-            sb.append("\tpublic ");
-            sb.append(cso.getType());
-            sb.append(" ");
-            sb.append(cso.getName());
-            sb.append(" { get; set; }");
+        for (CSharpOutputObject csoo : refElements)
+            emitter.emit(String.format("public %sClass %s { get; set; }", csoo.getName(), csoo.getName()));
 
-            printStream.println(sb.toString());
+        emitter.emit(String.format("public %s() {}", className));
+        
+        emitter.unindent();
+        emitter.emit("}");
 
-        }
-
-        for (CSharpOutputObject csoo : refElements) {
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("\tpublic ");
-            sb.append(csoo.getName());
-            sb.append("Class ");
-            sb.append(csoo.getName());
-            sb.append(" { get; set; }");
-
-            printStream.println(sb.toString());
-        }
-
-        printStream.println("\tpublic " + this.name + "Class() {}");
-        printStream.println("}");
-
-        for (CSharpOutputObject csoo : refElements) {
-
-            csoo.print(printStream);
-
-        }
+        for (CSharpOutputObject csoo : refElements)
+            csoo.print(emitter);
 
     }
 

@@ -1,6 +1,6 @@
 package me.nosrac.filetypes;
 
-import java.io.PrintStream;
+import me.nosrac.util.Emitter;
 
 public interface OutputObject {
 
@@ -10,6 +10,6 @@ public interface OutputObject {
     public <T extends LangObject> T[] getRootElements();
     public <T extends OutputObject> T[] getRefElements();
 
-    public void print(PrintStream printStream);
+    public void print(Emitter emitter);
 
 }
