@@ -28,7 +28,7 @@ public class Emitter {
     public void emit(String string) {
 
         for (int i = 0; i < indents; i++)
-            System.out.print("\t");
+            this.stream.print("\t");
 
         this.stream.println(string);
 
